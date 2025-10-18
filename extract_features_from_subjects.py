@@ -1,3 +1,14 @@
+"""
+Brain Network Feature Extraction
+================================
+
+Extracts network features from all .mat files in mat_subjects/ directory.
+Generates enhanced_brain_features.csv for analysis.
+
+Author: Brain Network Analysis Team
+Version: 1.0
+"""
+
 import glob
 import os
 import pandas as pd

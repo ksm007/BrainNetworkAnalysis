@@ -1,3 +1,14 @@
+"""
+Brain Connectivity Matrix Processing
+====================================
+
+Utilities for processing .mat brain connectivity files and extracting
+network topology features.
+
+Author: Brain Network Analysis Team
+Version: 1.0
+"""
+
 import scipy.io
 import numpy as np
 import pandas as pd

@@ -1,3 +1,14 @@
+"""
+Basic Brain Network Feature Analysis
+====================================
+
+Simple analysis script for sex classification using basic network features.
+This is a baseline analysis - use enhanced_analysis.py for comprehensive results.
+
+Author: Brain Network Analysis Team
+Version: 1.0 (Basic)
+"""
+
 from extract_features_from_subjects import features_dataframe
 import pandas as pd
 from sklearn.model_selection import train_test_split
