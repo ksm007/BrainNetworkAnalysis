@@ -111,7 +111,7 @@ BrainNetworkAnalysis/                    ✅ CLEAN & ORGANIZED
 4. **🚀 Ready for Production**: All scripts tested and working
 5. **📚 Publication-Ready**: Research-quality documentation
 
-### **🏆 Achievement Highlights**
+### **🏆 Achievement Highlights** 
 
 - **75.5% math ability prediction** from brain connectivity patterns
 - **114 subjects** analyzed with comprehensive network features
