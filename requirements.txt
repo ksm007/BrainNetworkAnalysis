@@ -12,6 +12,3 @@ seaborn>=0.11.0
 
 # Network analysis
 networkx>=2.6.0
-
-# Optional: Advanced visualization
-# plotly>=5.0.0
