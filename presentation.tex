@@ -1,0 +1,673 @@
+% Brain Network Classification - Class Presentation
+\documentclass{beamer}
+\mode<presentation>
+{
+  \usetheme{Frankfurt}
+  \usecolortheme{crane}
+  \usefonttheme{default}
+  \setbeamertemplate{navigation symbols}{}
+  \setbeamertemplate{caption}[numbered]
+}
+
+% Packages
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{multicol}
+\usepackage{hyperref}
+
+% Colors
+\definecolor{darkblue}{RGB}{0,51,102}
+\definecolor{lightblue}{RGB}{51,153,255}
+\definecolor{darkgreen}{RGB}{0,102,51}
+\definecolor{codebg}{RGB}{245,245,245}
+
+\setbeamercolor{structure}{fg=darkblue}
+\setbeamercolor{title}{fg=darkblue}
+\setbeamercolor{frametitle}{fg=darkblue}
+
+% Code listing style
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    backgroundcolor=\color{codebg},
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{red},
+    breaklines=true,
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny\color{gray}
+}
+
+% Title page information
+\title[Brain Network Analysis]{Brain Network Analysis}
+\subtitle{Classification of Human Subjects from Brain Connectivity Networks}
+\author{CSE 575 - Statistical Machine Learning}
+\institute{Arizona State University}
+\date{Fall 2025}
+
+% Logo (optional - comment out if not available)
+% \logo{\includegraphics[height=0.8cm]{logo.png}}
+
+\begin{document}
+
+% ============================================================
+% TITLE SLIDE
+% ============================================================
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\begin{frame}{Team Members}
+\begin{table}
+\centering
+\small
+\begin{tabular}{lll}
+\toprule
+\textbf{Name} & \textbf{ASURITE} & \textbf{ASU ID} \\
+\midrule
+Dhanush Shivanand & dshivana & 1233405812 \\
+Kartik Suhas Marathe & kmarathe & 1233615346 \\
+Mohith Sadashiva Reddy & msadash1 & 1233347260 \\
+Tejas Chandrasekhar & tchandr7 & 1233415172 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vskip 1cm
+\centering
+\textbf{Course:} CSE 575 - Statistical Machine Learning\\
+\textbf{Institution:} Arizona State University\\
+\textbf{Semester:} Fall 2025
+\end{frame}
+
+% ============================================================
+% TABLE OF CONTENTS
+% ============================================================
+\begin{frame}{Outline}
+    \tableofcontents
+\end{frame}
+
+% ============================================================
+% SECTION 1: INTRODUCTION
+% ============================================================
+\section{Introduction}
+
+\begin{frame}{Project Overview}
+\begin{itemize}
+  \item \textbf{Goal:} Classify human subjects based on brain connectivity networks
+  \item \textbf{Dataset:} 114 subjects with 70 brain regions each
+  \item \textbf{Three Classification Tasks:}
+  \begin{itemize}
+    \item Gender (Male vs. Female)
+    \item Mathematical Ability (High vs. Normal)
+    \item Creativity (Creative vs. Normal)
+  \end{itemize}
+  \item \textbf{Approach:} Advanced machine learning on graph features
+\end{itemize}
+
+\vskip 0.5cm
+\small{\textit{Using brain networks to predict cognitive and biological traits}}
+\end{frame}
+
+\begin{frame}{Dataset Description}
+\begin{columns}
+\column{0.5\textwidth}
+\textbf{Brain Networks:}
+\begin{itemize}
+  \item 114 subjects (age 18-29)
+  \item 70 brain regions per subject
+  \item Weighted connectivity graphs
+  \item 2,415 possible connections
+  \item Sparse matrices (.mat files)
+\end{itemize}
+
+\column{0.5\textwidth}
+\textbf{Subject Metadata:}
+\begin{itemize}
+  \item Gender (50 F, 64 M)
+  \item CCI Score (math ability)
+  \item CAQ Score (creativity)
+  \item FSIQ (IQ), Age
+  \item Personality traits
+\end{itemize}
+\end{columns}
+
+\vskip 0.3cm
+\textbf{Classification Tasks:}
+\begin{itemize}
+  \item \textbf{Gender:} Biological sex classification (50 F, 64 M)
+  \item \textbf{Math (75th):} Top 25\% mathematical ability (29 high, 85 normal)
+  \item \textbf{Creativity (75th):} Top 25\% creative achievement (31 high, 83 normal)
+\end{itemize}
+\end{frame}
+
+% ============================================================
+% SECTION 2: METHODOLOGY
+% ============================================================
+\section{Methodology}
+
+\begin{frame}{Feature Extraction}
+\textbf{Extracted 60+ Graph-Level Features:}
+
+\begin{columns}
+\column{0.5\textwidth}
+\small{
+\textbf{Basic Metrics:}
+\begin{itemize}
+  \item Degree statistics (avg, max, std)
+  \item Strength statistics
+  \item Network density
+  \item Edge weight statistics
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{Clustering \& Topology:}
+\begin{itemize}
+  \item Clustering coefficient
+  \item Transitivity
+  \item Small-world properties
+  \item Assortativity
+\end{itemize}
+}
+
+\column{0.5\textwidth}
+\small{
+\textbf{Centrality Measures:}
+\begin{itemize}
+  \item Betweenness centrality
+  \item Eigenvector centrality
+  \item Closeness centrality
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{Advanced Features:}
+\begin{itemize}
+  \item Global/local efficiency
+  \item Modularity \& communities
+  \item Spectral properties
+  \item Rich club coefficient
+  \item K-core decomposition
+\end{itemize}
+}
+\end{columns}
+
+\vskip 0.3cm
+\centering
+\textbf{13 basic features} $\rightarrow$ \textbf{60+ advanced features}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Classification Pipeline}
+\begin{enumerate}
+  \item \textbf{Feature Extraction:} 60+ features per subject using NetworkX
+  \item \textbf{Feature Engineering:} Create interaction terms, ratios, power transforms
+  \item \textbf{Feature Selection:} SelectKBest (ANOVA F-test) - choose top 25-35 features
+  \item \textbf{Data Split:} 5-fold stratified cross-validation
+  \item \textbf{Standardization:} RobustScaler (zero mean, unit variance)
+  \item \textbf{Model Training:} 10 algorithms + ensemble methods
+  \item \textbf{Evaluation:} Accuracy, Precision, Recall, F1, ROC-AUC
+\end{enumerate}
+
+\vskip 0.3cm
+\textbf{Key Techniques:}
+\begin{itemize}
+  \item Hyperparameter optimization (Grid Search)
+  \item Class balancing for imbalanced datasets
+  \item Stacking ensemble for best performance
+\end{itemize}
+\end{frame}
+
+% ============================================================
+% SECTION 3: MACHINE LEARNING MODELS
+% ============================================================
+\section{Machine Learning Models}
+
+\begin{frame}{Classification Tasks}
+\textbf{Three Prediction Tasks:}
+
+\begin{enumerate}
+  \item \textbf{Math Ability (Math\_75th):} Predict top 25\% mathematical ability
+  \begin{itemize}
+    \item Based on Cognitive Composite Index (CCI) 75th percentile
+    \item 29 high-math vs 85 normal subjects (class imbalance)
+  \end{itemize}
+  
+  \vspace{0.3cm}
+  
+  \item \textbf{Creativity (Creativity\_75th):} Predict top 25\% creative achievement
+  \begin{itemize}
+    \item Based on Creative Achievement Questionnaire (CAQ) 75th percentile
+    \item 31 creative vs 83 normal subjects (class imbalance)
+  \end{itemize}
+  
+  \vspace{0.3cm}
+  
+  \item \textbf{Gender:} Predict biological sex from brain structure
+  \begin{itemize}
+    \item 64 male vs 50 female subjects
+  \end{itemize}
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Machine Learning Models}
+\textbf{10 Advanced Algorithms:}
+
+\begin{columns}
+\column{0.5\textwidth}
+\textbf{Ensemble Methods:}
+\begin{itemize}
+  \item Random Forest
+  \item Extra Trees
+  \item Gradient Boosting
+  \item AdaBoost
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Support Vector Machines:}
+\begin{itemize}
+  \item SVM (RBF kernel)
+  \item SVM (Polynomial kernel)
+\end{itemize}
+
+\column{0.5\textwidth}
+\textbf{Linear Models:}
+\begin{itemize}
+  \item Logistic Regression (L1)
+  \item Logistic Regression (L2)
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Deep Learning:}
+\begin{itemize}
+  \item Neural Network (150-75 units)
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{Meta-Ensemble:}
+\begin{itemize}
+  \item Stacking Ensemble
+\end{itemize}
+\end{columns}
+
+\vskip 0.5cm
+\centering
+\textcolor{red}{\textbf{Task-Specific Optimization:}} Different algorithms excel at different tasks
+\end{frame}
+
+\begin{frame}{Optimization Techniques}
+    \begin{enumerate}
+        \item \textbf{Feature Engineering:}
+        \begin{itemize}
+            \item Interaction terms (multiplicative combinations)
+            \item Ratio features (strength dominance, degree variability)
+            \item Power transformations (squared, square root)
+            \item Statistical aggregates (sum, mean, std, range)
+        \end{itemize}
+        
+        \item \textbf{Hyperparameter Optimization:}
+        \begin{itemize}
+            \item Grid search with 5-fold cross-validation
+            \item Task-specific parameter tuning
+            \item Class balancing for imbalanced datasets
+        \end{itemize}
+        
+        \item \textbf{Regularization:}
+        \begin{itemize}
+            \item PCA dimensionality reduction (prevents overfitting)
+            \item Robust scaling (handles outliers)
+            \item Feature selection (SelectKBest, ANOVA F-test)
+        \end{itemize}
+        
+        \item \textbf{Validation:}
+        \begin{itemize}
+            \item Stratified 5-fold cross-validation
+            \item Multiple random seeds for stability
+        \end{itemize}
+    \end{enumerate}
+\end{frame}
+
+
+% ============================================================
+% SECTION 4: RESULTS
+% ============================================================
+\section{Results}
+
+\begin{frame}{Classification Performance}
+\begin{table}
+\centering
+\begin{tabular}{lcc}
+\toprule
+\textbf{Task} & \textbf{Best Model} & \textbf{Accuracy} \\
+\midrule
+Math Ability (75th \%) & Random Forest & \textbf{76.32\%} \\
+Creativity (75th \%) & Extra Trees & \textbf{73.68\%} \\
+Gender & Logistic Regression (L1) & \textbf{70.18\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vskip 0.5cm
+
+\centering
+\textbf{Key Finding:} Different models excel at different tasks!
+\end{frame}
+
+\begin{frame}{Understanding the Visualizations}
+\textbf{All metrics computed using 5-fold cross-validation:}
+
+\begin{enumerate}
+  \item \textbf{Confusion Matrix:} Shows prediction errors
+  \begin{itemize}
+    \item Diagonal = Correct predictions
+    \item Off-diagonal = Misclassifications
+    \item Based on CV predictions (not a separate test set)
+  \end{itemize}
+  
+  \vspace{0.2cm}
+  
+  \item \textbf{ROC Curve:} Measures discrimination ability
+  \begin{itemize}
+    \item AUC = Area Under Curve (0.5 = random, 1.0 = perfect)
+    \item Shows tradeoff between true/false positive rates
+  \end{itemize}
+  
+  \vspace{0.2cm}
+  
+  \item \textbf{Learning Curve:} Shows if model needs more data
+  \begin{itemize}
+    \item Training vs validation performance
+    \item Gap indicates overfitting
+  \end{itemize}
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Math Ability - Confusion Matrix}
+\begin{columns}
+\column{0.5\textwidth}
+\includegraphics[width=\textwidth]{confusion_matrix_Math_75th.png}
+
+\column{0.5\textwidth}
+\textbf{Interpretation (5-fold CV):}
+\small
+\begin{itemize}
+  \item \textbf{TN:} 85/85 (100\%) normal correctly identified
+  \item \textbf{TP:} 2/29 (7\%) high correctly identified
+  \item \textbf{Specificity:} 100\% - perfect at ruling out
+  \item \textbf{Random Forest:} Conservative predictor
+\end{itemize}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Math Ability - ROC Curve}
+\begin{columns}
+\column{0.5\textwidth}
+\includegraphics[width=\textwidth]{roc_curve_Math_75th.png}
+
+\column{0.5\textwidth}
+\textbf{ROC AUC = 0.558}
+\small
+\begin{itemize}
+  \item \textbf{Modest discrimination} between high vs normal
+  \item Above random (0.5)
+  \item Orange = model, diagonal = random
+  \item \textbf{Random Forest} achieves 76.32\% accuracy
+\end{itemize}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Math Ability - Learning Curve}
+\begin{columns}
+\column{0.5\textwidth}
+\includegraphics[width=\textwidth]{learning_curve_Math_75th.png}
+
+\column{0.5\textwidth}
+\textbf{Analysis:}
+\small
+\begin{itemize}
+  \item Scores converge at 70-73\%
+  \item Small gap = good generalization
+  \item Performance plateaus
+  \item \textcolor{red}{More data/features} could help
+\end{itemize}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Creativity - Confusion Matrix}
+\begin{columns}
+\column{0.5\textwidth}
+\includegraphics[width=\textwidth]{confusion_matrix_Creativity_75th.png}
+
+\column{0.5\textwidth}
+\textbf{Interpretation (5-fold CV):}
+\small
+\begin{itemize}
+  \item \textbf{Specificity:} 100\% (83/83 non-creative correct)
+  \item \textbf{Recall:} 3\% (only 1/31 creative found)
+  \item \textbf{Accuracy:} 73.68\%
+  \item \textbf{Extra Trees:} Very conservative
+\end{itemize}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Creativity - ROC Curve}
+\begin{columns}
+\column{0.5\textwidth}
+\includegraphics[width=\textwidth]{roc_curve_Creativity_75th.png}
+
+\column{0.5\textwidth}
+\textbf{ROC AUC = 0.424}
+\small
+\begin{itemize}
+  \item \textbf{Poor discrimination} for creativity
+  \item Below random chance (0.5)
+  \item Most challenging task
+  \item \textbf{Extra Trees:} 73.68\% accuracy
+\end{itemize}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Gender - Confusion Matrix}
+\begin{columns}
+\column{0.5\textwidth}
+\includegraphics[width=\textwidth]{confusion_matrix_Sex.png}
+
+\column{0.5\textwidth}
+\textbf{Interpretation (5-fold CV):}
+\small
+\begin{itemize}
+  \item \textbf{Accuracy:} 70.18\% from brain structure
+  \item \textbf{Precision:} 79\% (male)
+  \item \textbf{Recall:} 64\% male, 78\% female
+  \item \textbf{Logistic Regression} best for gender
+\end{itemize}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Gender - ROC Curve}
+\begin{columns}
+\column{0.5\textwidth}
+\includegraphics[width=\textwidth]{roc_curve_Sex.png}
+
+\column{0.5\textwidth}
+\textbf{ROC AUC = 0.724}
+\small
+\begin{itemize}
+  \item \textbf{Good discrimination} between genders
+  \item Best performing task (70.18\%)
+  \item Clearest connectivity signal
+  \item Highly significant (p < 0.001)
+\end{itemize}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Validation Methodology}
+\begin{alertblock}{Cross-Validation vs Train/Test Split}
+\textbf{Our Approach:} 5-fold stratified cross-validation
+\begin{itemize}
+  \item Dataset split into 5 equal parts
+  \item Each part serves as validation set once
+  \item Model trained on remaining 4 parts
+  \item All 114 subjects used for both training and validation
+\end{itemize}
+\end{alertblock}
+
+\vspace{0.3cm}
+
+\textbf{Why Cross-Validation?}
+\begin{enumerate}
+  \item \textbf{Small Dataset:} 114 subjects total
+  \begin{itemize}
+    \item Math: only 29 positive cases
+    \item Train/test split would lose valuable data
+  \end{itemize}
+  
+  \item \textbf{Robust Estimates:} Each subject predicted exactly once
+  
+  \item \textbf{Standard Practice:} Used in medical/neuroscience research
+\end{enumerate}
+
+\vspace{0.2cm}
+
+\end{frame}
+
+\begin{frame}{Results Summary}
+\begin{table}
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Task} & \textbf{Accuracy} & \textbf{ROC AUC} & \textbf{PR AUC} & \textbf{p-value} \\
+\midrule
+Math (Random Forest) & 76.32\% & 0.558 & 0.334 & < 0.001 \\
+Creativity (Extra Trees) & 73.68\% & 0.424 & 0.271 & < 0.001 \\
+Gender (Log. Reg. L1) & 70.18\% & 0.724 & 0.727 & < 0.001 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{0.3cm}
+
+\textbf{Key Insights:}
+\begin{itemize}
+  \item \textbf{Gender} shows clearest signal (ROC AUC = 0.724, p < 0.001)
+  \item \textbf{Task-specific models} outperform single algorithm approach
+  \item \textbf{Random Forest} best for Math (76.32\%)
+  \item \textbf{Extra Trees} best for Creativity (73.68\%)
+  \item \textbf{Logistic Regression} best for Gender (70.18\%)
+  \item Cognitive tasks still limited by class imbalance (very high specificity)
+\end{itemize}
+\end{frame}
+
+% ============================================================
+% SECTION 5: CONCLUSIONS
+% ============================================================
+\section{Conclusions}
+
+\begin{frame}{Key Findings}
+\textbf{What We Achieved:}
+
+\begin{enumerate}
+  \item \textbf{Strong Prediction Accuracy:}
+  \begin{itemize}
+    \item Math Ability: 76.32\% with Random Forest (p < 0.001)
+    \item Creativity: 73.68\% with Extra Trees (p < 0.001)
+    \item Gender: 70.18\% with Logistic Regression (p < 0.001)
+  \end{itemize}
+  
+  \vspace{0.3cm}
+  
+  \item \textbf{Brain Networks Show Cognitive Signals:}
+  \begin{itemize}
+    \item Structural connectivity contains predictive information
+    \item Gender shows strongest signal in connectivity patterns
+    \item Cognitive tasks limited by class imbalance and complexity
+  \end{itemize}
+  
+  \vspace{0.3cm}
+  
+  \item \textbf{Machine Learning Insights:}
+  \begin{itemize}
+    \item Task-specific model selection improves performance
+    \item Tree ensembles excel at cognitive tasks
+    \item Linear models work well for gender classification
+    \item Feature engineering critical for all tasks
+  \end{itemize}
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Future Work}
+\textbf{How to Improve Further:}
+
+\begin{itemize}
+  \item \textbf{More Data:}
+  \begin{itemize}
+    \item Collect more subjects (114 → 500+)
+    \item Better class balance
+  \end{itemize}
+  
+  \vspace{0.3cm}
+  
+  \item \textbf{Advanced Features:}
+  \begin{itemize}
+    \item Add functional connectivity
+    \item Include demographic data
+  \end{itemize}
+  
+  \vspace{0.3cm}
+  
+  \item \textbf{Deep Learning:}
+  \begin{itemize}
+    \item Graph neural networks
+    \item Transformer architectures
+  \end{itemize}
+\end{itemize}
+
+\vskip 0.5cm
+\centering
+\textit{Potential: Improved recall and balanced performance with more data}
+\end{frame}
+
+\begin{frame}[plain]
+\begin{center}
+\Huge \textbf{Thank You!}
+
+\vspace{1.5cm}
+
+\Large Questions?
+
+\vspace{1.5cm}
+
+\normalsize
+\textbf{Team Members:}
+\\
+Dhanush Shivanand, Kartik Suhas Marathe,
+\\
+Mohith Sadashiva Reddy, Tejas Chandrasekhar
+
+\vspace{0.8cm}
+
+\textbf{Course:} CSE 575 Statistical Machine Learning
+\\
+\textbf{Institution:} Arizona State University
+\\
+\textbf{Semester:} Fall 2025
+\end{center}
+\end{frame}
+
+\end{document}

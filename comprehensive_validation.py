@@ -22,9 +22,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import (cross_val_score, cross_val_predict, 
                                      StratifiedKFold, learning_curve)
-from sklearn.ensemble import RandomForestClassifier, StackingClassifier
+from sklearn.ensemble import RandomForestClassifier, StackingClassifier, GradientBoostingClassifier, ExtraTreesClassifier
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
+from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import RobustScaler
 from sklearn.feature_selection import SelectKBest, f_classif
 from sklearn.decomposition import PCA
@@ -45,39 +46,98 @@ class ComprehensiveValidator:
         self.results = {}
         
     def create_best_model(self):
-        """Create the best performing model (Stacking Ensemble)."""
+        """Create the best performing model for each task - matches improved_classification.py results."""
         
-        # Base models
-        rf = RandomForestClassifier(
-            n_estimators=300, max_depth=12, min_samples_split=3,
-            class_weight='balanced_subsample', random_state=42, n_jobs=-1
-        )
+        # Task-specific best models based on improved_classification.py evaluation
+        if 'Math' in self.task_name:
+            # Random Forest - Best for Math (76.3% accuracy)
+            model = RandomForestClassifier(
+                n_estimators=300, 
+                max_depth=12, 
+                min_samples_split=3,
+                min_samples_leaf=2, 
+                class_weight='balanced_subsample',
+                max_features='sqrt', 
+                random_state=42, 
+                n_jobs=-1
+            )
+        elif 'Creativity' in self.task_name:
+            # Extra Trees - Best for Creativity (73.7% accuracy)
+            model = ExtraTreesClassifier(
+                n_estimators=300, 
+                max_depth=14, 
+                min_samples_split=2,
+                min_samples_leaf=1, 
+                class_weight='balanced_subsample',
+                max_features='sqrt', 
+                random_state=42, 
+                n_jobs=-1
+            )
+        elif 'Sex' in self.task_name:
+            # Logistic Regression L1 - Best for Gender (70.2% accuracy)
+            model = LogisticRegression(
+                C=1.0, 
+                penalty='l1', 
+                solver='liblinear',
+                class_weight='balanced', 
+                random_state=42, 
+                max_iter=1000
+            )
+        else:
+            # Default to Gradient Boosting
+            model = GradientBoostingClassifier(
+                n_estimators=200, 
+                learning_rate=0.05, 
+                max_depth=6,
+                min_samples_split=4, 
+                min_samples_leaf=2,
+                subsample=0.8, 
+                random_state=42
+            )
         
-        et = RandomForestClassifier(
-            n_estimators=300, max_depth=14, min_samples_split=2,
-            class_weight='balanced_subsample', random_state=42, n_jobs=-1
-        )
+        return model
+    
+    def engineer_advanced_features(self, X):
+        """Create advanced feature interactions - matches improved_classification.py."""
         
-        gb = RandomForestClassifier(
-            n_estimators=200, max_depth=10,
-            class_weight='balanced_subsample', random_state=42, n_jobs=-1
-        )
+        X_enhanced = X.copy()
+        feature_names = X.columns.tolist()
         
-        svm = SVC(
-            C=10, kernel='rbf', probability=True,
-            class_weight='balanced', random_state=42
-        )
+        # Interaction features
+        if 'avg_edge_weight' in feature_names and 'density' in feature_names:
+            X_enhanced['edge_density_product'] = X['avg_edge_weight'] * X['density']
         
-        # Stacking ensemble
-        stacking = StackingClassifier(
-            estimators=[('rf', rf), ('et', et), ('gb', gb), ('svm', svm)],
-            final_estimator=LogisticRegression(C=1.0, class_weight='balanced', 
-                                               random_state=42),
-            cv=5,
-            n_jobs=-1
-        )
+        if 'clustering_coef' in feature_names and 'transitivity' in feature_names:
+            X_enhanced['clustering_transitivity_ratio'] = X['clustering_coef'] / (X['transitivity'] + 1e-8)
         
-        return stacking
+        if 'avg_betweenness' in feature_names and 'avg_eigenvector' in feature_names:
+            X_enhanced['centrality_product'] = X['avg_betweenness'] * X['avg_eigenvector']
+        
+        if 'global_efficiency' in feature_names and 'local_efficiency' in feature_names:
+            X_enhanced['efficiency_ratio'] = X['global_efficiency'] / (X['local_efficiency'] + 1e-8)
+        
+        if 'modularity' in feature_names and 'num_communities' in feature_names:
+            X_enhanced['modularity_per_community'] = X['modularity'] / (X['num_communities'] + 1)
+        
+        # Polynomial features for key metrics
+        if 'avg_degree' in feature_names:
+            X_enhanced['avg_degree_squared'] = X['avg_degree'] ** 2
+            X_enhanced['avg_degree_cubed'] = X['avg_degree'] ** 3
+        
+        if 'clustering_coef' in feature_names:
+            X_enhanced['clustering_squared'] = X['clustering_coef'] ** 2
+        
+        if 'avg_strength' in feature_names:
+            X_enhanced['avg_strength_squared'] = X['avg_strength'] ** 2
+        
+        # Ratio features
+        if 'max_strength' in feature_names and 'avg_strength' in feature_names:
+            X_enhanced['strength_dominance'] = X['max_strength'] / (X['avg_strength'] + 1e-8)
+        
+        if 'max_degree' in feature_names and 'avg_degree' in feature_names:
+            X_enhanced['degree_dominance'] = X['max_degree'] / (X['avg_degree'] + 1e-8)
+        
+        return X_enhanced
     
     def plot_confusion_matrix(self, y_true, y_pred, title):
         """Plot confusion matrix with detailed statistics."""
@@ -361,26 +421,33 @@ class ComprehensiveValidator:
         print(f"# COMPREHENSIVE VALIDATION: {self.task_name}")
         print(f"{'#'*70}")
         
-        # Create model
-        print(f"\nCreating Stacking Ensemble model...")
-        model = self.create_best_model()
+        # Feature engineering
+        print(f"\nEngineering advanced features...")
+        X_engineered = self.engineer_advanced_features(X)
+        print(f"   Original features: {X.shape[1]}")
+        print(f"   Engineered features: {X_engineered.shape[1]}")
         
-        # Create pipeline
+        # Create model
+        model = self.create_best_model()
+        model_name = model.__class__.__name__
+        print(f"\nCreating {model_name}...")
+        
+        # Create pipeline - matches improved_classification.py
         pipeline = Pipeline([
             ('scaler', RobustScaler()),
-            ('selector', SelectKBest(f_classif, k=min(25, X.shape[1]))),
-            ('pca', PCA(n_components=min(15, X.shape[1]), random_state=42)),
+            ('selector', SelectKBest(f_classif, k=min(25, X_engineered.shape[1]))),
+            ('pca', PCA(n_components=min(15, X_engineered.shape[1]), random_state=42)),
             ('classifier', model)
         ])
         
         # Cross-validation predictions
         print(f"\nGenerating cross-validation predictions...")
         cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
-        y_pred = cross_val_predict(pipeline, X, y, cv=cv, n_jobs=-1)
+        y_pred = cross_val_predict(pipeline, X_engineered, y, cv=cv, n_jobs=-1)
         
         # Get probability predictions for ROC/PR curves
         print(f"Generating probability predictions...")
-        y_proba = cross_val_predict(pipeline, X, y, cv=cv, method='predict_proba', n_jobs=-1)[:, 1]
+        y_proba = cross_val_predict(pipeline, X_engineered, y, cv=cv, method='predict_proba', n_jobs=-1)[:, 1]
         
         # 1. Confusion Matrix
         print(f"\n1. CONFUSION MATRIX")
@@ -396,17 +463,17 @@ class ComprehensiveValidator:
         
         # 4. Learning Curve
         print(f"\n4. LEARNING CURVE")
-        self.plot_learning_curve(pipeline, X, y, self.task_name)
+        self.plot_learning_curve(pipeline, X_engineered, y, self.task_name)
         
         # 5. Cross-validation Analysis
-        cv_results = self.cross_validation_analysis(pipeline, X, y)
+        cv_results = self.cross_validation_analysis(pipeline, X_engineered, y)
         
         # 6. Statistical Tests
         stats_results = self.statistical_tests(y, y_pred)
         
         # 7. Error Analysis
         if feature_names is not None:
-            self.error_analysis(X, y, y_pred, feature_names)
+            self.error_analysis(X_engineered, y, y_pred, feature_names)
         
         # 8. Classification Report
         print(f"\n{'='*70}")
